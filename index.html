@@ -2338,8 +2338,9 @@ html, body {
           Sign In
         </button>
 
-        <button class="btn btn-secondary btn-sm" id="btn-settings-trigger" style="display: none;" title="Account & Supabase Settings">
-          ⚙️ Settings
+        <!-- Supabase & Cloud Settings Button (Always Visible) -->
+        <button class="btn btn-secondary btn-sm btn-settings-trigger" id="btn-settings-trigger" title="Connect Supabase Database & Cloud Settings">
+          ⚙️ Supabase Settings
         </button>
       </div>
     </header>
@@ -2422,6 +2423,9 @@ html, body {
               <span class="stat-value" id="stat-chapter-count">0</span>
               <span class="stat-label">Chapters</span>
             </div>
+            <button class="btn btn-secondary btn-settings-trigger" title="Connect Supabase Cloud Database">
+              ☁️ Connect Supabase
+            </button>
             <button class="btn btn-primary" id="btn-new-notebook">
               ✨ Inscribe New Notebook
             </button>
@@ -2503,6 +2507,11 @@ html, body {
           <!-- Dramatis Personae (Characters) Trigger -->
           <button class="btn btn-secondary btn-sm" id="btn-open-characters" title="Dramatis Personae">
             🎭 Characters
+          </button>
+
+          <!-- Supabase & Cloud Settings Trigger -->
+          <button class="btn btn-secondary btn-sm btn-settings-trigger" title="Connect Supabase & Cloud Settings">
+            ⚙️ Settings
           </button>
 
           <!-- Zen Mode -->
@@ -5925,13 +5934,15 @@ class AuraApp {
       }
     });
 
-    // Settings Modal
-    document.getElementById('btn-settings-trigger')?.addEventListener('click', () => {
-      const config = db.getSupabaseConfig();
-      document.getElementById('settings-supabase-url').value = config.url || '';
-      document.getElementById('settings-supabase-key').value = config.key || '';
-      document.getElementById('settings-gemini-key').value = localStorage.getItem(CONFIG.STORAGE_KEYS.GEMINI_KEY) || '';
-      this.openModal('modal-settings');
+    // Settings Modal (All Triggers)
+    document.querySelectorAll('.btn-settings-trigger, #btn-settings-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const config = db.getSupabaseConfig();
+        document.getElementById('settings-supabase-url').value = config.url || '';
+        document.getElementById('settings-supabase-key').value = config.key || '';
+        document.getElementById('settings-gemini-key').value = localStorage.getItem(CONFIG.STORAGE_KEYS.GEMINI_KEY) || '';
+        this.openModal('modal-settings');
+      });
     });
 
     document.getElementById('form-settings')?.addEventListener('submit', async (e) => {
