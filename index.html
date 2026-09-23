@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura — Your AI Storytelling Studio</title>
+  <meta name="description" content="Where every story finds its soul. Aura is an aesthetic, royal, pastel-themed AI storytelling and story-editing sanctuary." />
+  
+  <!-- Favicon SVG Crown -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>" />
+
+  <!-- Supabase Official Client JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Aura Design System Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/typography.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/workspace.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- Ambient Animated Pastel Orbs -->
+  <div class="ambient-canvas">
+    <div class="orb orb-blue"></div>
+    <div class="orb orb-pink"></div>
+    <div class="orb orb-purple"></div>
+    <div class="orb orb-gold"></div>
+  </div>
+
+  <div id="app">
+
+    <!-- ======================================================================
+         COMMON TOP BAR (Visible on Landing & Dashboard)
+         ====================================================================== -->
+    <header class="aura-header" id="main-header">
+      <div class="brand-wrapper" title="Aura Studio">
+        <div class="brand-icon">✨</div>
+        <span class="brand-name">Aura</span>
+      </div>
+
+      <div class="header-actions">
+        <!-- Ambient Royal Soundscape Pill -->
+        <button class="soundscape-pill" id="btn-soundscape" title="Toggle royal library ambient soundscape">
+          <span>🎶</span>
+          <span class="soundscape-waves">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+          </span>
+          <span class="ui-text" style="font-size: 12px;">Ambience</span>
+        </button>
+
+        <!-- Theme Toggle (Pastel / Twilight) -->
+        <button class="btn-icon" id="btn-theme-toggle" title="Toggle Daylight / Twilight mode">
+          🌙
+        </button>
+
+        <!-- Guide / Tutorial Trigger -->
+        <button class="btn-text" id="btn-guide-trigger">
+          📖 Writing Guide
+        </button>
+
+        <!-- Dynamic User Auth Button / Profile -->
+        <button class="btn btn-secondary btn-sm" id="btn-header-auth">
+          Sign In
+        </button>
+
+        <button class="btn btn-secondary btn-sm" id="btn-settings-trigger" style="display: none;" title="Account & Supabase Settings">
+          ⚙️ Settings
+        </button>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         1. LANDING VIEW HERO
+         Displays the Grand Aura Title and the 3-line Abril Fatface Subtitle
+         ====================================================================== -->
+    <main class="view-section active" id="view-landing">
+      <section class="landing-hero">
+        <div class="royal-crest">
+          <span>👑</span> An Enchanted Creative Sanctuary
+        </div>
+
+        <!-- The Aura Title (Strictly appears ONLY at the beginning of application) -->
+        <h1 class="landing-title aura-main-title">Aura</h1>
+        
+        <p class="landing-tagline">Where every story finds its soul. ✨</p>
+
+        <!-- The exact 3 required subtitle lines in Abril Fatface -->
+        <div class="landing-poetic-subtitles">
+          <div class="poetic-line">stories written under fading skies</div>
+          <div class="poetic-line">lost somewhere between dreams and reality</div>
+          <div class="poetic-line">creating worlds that feels like memories</div>
+        </div>
+
+        <div class="landing-cta-group">
+          <button class="btn btn-primary btn-lg" id="btn-landing-enter">
+            ✨ Enter the Studio
+          </button>
+          <button class="btn btn-secondary btn-lg" id="btn-landing-demo">
+            🌸 Explore as Royal Author
+          </button>
+        </div>
+
+        <!-- Feature Highlights Preview -->
+        <div class="landing-features-preview">
+          <div class="preview-card">
+            <div class="preview-icon">🪄</div>
+            <h3>9 AI Storytelling Modes</h3>
+            <p>From narrative continuation to emotional resonance, error diagnosis, and worldbuilding lore.</p>
+          </div>
+          <div class="preview-card">
+            <div class="preview-icon">📓</div>
+            <h3>Multi-Chapter Notebooks</h3>
+            <p>Organize epic manuscripts with chapters, live word counts, reading speeds, and autosave.</p>
+          </div>
+          <div class="preview-card">
+            <div class="preview-icon">🎭</div>
+            <h3>Dramatis Personae</h3>
+            <p>Craft intricate character dossiers and relationships that the AI references in every scene.</p>
+          </div>
+          <div class="preview-card">
+            <div class="preview-icon">🔐</div>
+            <h3>Royal Vault & Security</h3>
+            <p>Password-protect private notebooks with cryptographic hashing and safe age-based filters.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================================================================
+         2. DASHBOARD VIEW (Story Library & Notebooks)
+         ====================================================================== -->
+    <section class="view-section" id="view-dashboard">
+      <div class="dashboard-container">
+        
+        <!-- Welcome Banner -->
+        <div class="dashboard-welcome">
+          <div class="welcome-text">
+            <h1 id="user-greeting">Welcome, Royal Author ✨</h1>
+            <p>Select a manuscript to resume writing, or inscribe a new chronicle.</p>
+          </div>
+          <div class="welcome-stats">
+            <div class="stat-item">
+              <span class="stat-value" id="stat-notebook-count">0</span>
+              <span class="stat-label">Notebooks</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-chapter-count">0</span>
+              <span class="stat-label">Chapters</span>
+            </div>
+            <button class="btn btn-primary" id="btn-new-notebook">
+              ✨ Inscribe New Notebook
+            </button>
+          </div>
+        </div>
+
+        <!-- Beginner Tips Banner -->
+        <div class="beginner-guide-banner">
+          <div class="guide-icon">💡</div>
+          <div class="guide-content">
+            <h4>Beginner's Storytelling Compass</h4>
+            <p>Each notebook stores its own chapters, characters, and dedicated AI conversation history. Click any notebook to open its writing studio.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="window.auraApp.openModal('modal-tutorial')">Learn More</button>
+        </div>
+
+        <!-- Controls: Search, Sort, Genre Filter -->
+        <div class="dashboard-controls">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="search-notebooks-input" placeholder="Search manuscripts, genres, or sub-genres..." />
+          </div>
+
+          <div class="filter-sort-group">
+            <select class="sort-select" id="sort-notebooks-select">
+              <option value="updated_desc">Recently Updated</option>
+              <option value="created_desc">Date Created</option>
+              <option value="name_asc">Title (A to Z)</option>
+              <option value="chapters_desc">Most Chapters</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Genre Pills Scroller -->
+        <div class="genre-pills-bar" id="genre-pills-container">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Notebooks Grid -->
+        <div class="notebooks-grid" id="notebooks-grid">
+          <!-- Dynamically populated -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         3. WORKSPACE VIEW (Chapter Editor + AI Storytelling Studio)
+         Note: The Aura title is NOT repeated here!
+         ====================================================================== -->
+    <section class="view-section workspace-view" id="view-workspace">
+      
+      <!-- Workspace Top Bar -->
+      <nav class="workspace-topbar">
+        <div class="topbar-left">
+          <button class="btn btn-secondary btn-sm" id="btn-back-to-library" title="Return to Dashboard">
+            ← Library
+          </button>
+          <div class="notebook-name-display" id="topbar-notebook-name">
+            The Crown of Forgotten Stars
+          </div>
+          <span class="notebook-genre-tag" id="topbar-genre-badge">Fantasy</span>
+        </div>
+
+        <div class="topbar-center">
+          <div class="autosave-indicator saved" id="topbar-autosave-indicator">
+            <span class="autosave-dot" id="autosave-dot"></span>
+            <span id="autosave-text">Saved ✨</span>
+          </div>
+
+          <div class="reading-metrics">
+            <span id="word-count-badge">0 words</span>
+            <span>•</span>
+            <span id="reading-time-badge">1 min read</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Dramatis Personae (Characters) Trigger -->
+          <button class="btn btn-secondary btn-sm" id="btn-open-characters" title="Dramatis Personae">
+            🎭 Characters
+          </button>
+
+          <!-- Zen Mode -->
+          <button class="btn-icon" id="btn-zen-mode" title="Distraction-Free Zen Mode">
+            🧘
+          </button>
+
+          <!-- Export Dropdown -->
+          <div style="position: relative; display: inline-block;">
+            <button class="btn btn-secondary btn-sm" id="btn-export-menu" onclick="document.getElementById('export-dropdown').classList.toggle('active')">
+              ⬇️ Export
+            </button>
+            <div id="export-dropdown" class="modal-card" style="display: none; position: absolute; right: 0; top: 38px; width: 170px; padding: 10px; z-index: 100;">
+              <button class="btn btn-text btn-sm" style="width: 100%; text-align: left;" id="btn-export-txt">Plain Text (.txt)</button>
+              <button class="btn btn-text btn-sm" style="width: 100%; text-align: left;" id="btn-export-md">Markdown (.md)</button>
+              <button class="btn btn-text btn-sm" style="width: 100%; text-align: left;" id="btn-export-pdf">Printable PDF</button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Workspace Body Layout -->
+      <div class="workspace-layout">
+        
+        <!-- Left: Chapter Navigator Sidebar -->
+        <aside class="chapters-sidebar" id="chapters-sidebar">
+          <div class="sidebar-header">
+            <span class="sidebar-title">Chapters</span>
+            <button class="chapter-action-btn" onclick="document.getElementById('chapters-sidebar').classList.toggle('collapsed')" title="Collapse Sidebar">◀</button>
+          </div>
+
+          <div class="add-chapter-btn-wrapper">
+            <button class="btn btn-add-chapter" id="btn-add-chapter">
+              + Add Another Chapter
+            </button>
+          </div>
+
+          <div class="chapters-list" id="chapters-list-container">
+            <!-- Dynamically populated with Chapter items -->
+          </div>
+        </aside>
+
+        <!-- Center: Dedicated Story Editor Canvas -->
+        <main class="editor-pane">
+          <!-- Editor Formatting Toolbar -->
+          <div class="editor-toolbar">
+            <div class="toolbar-group">
+              <button class="toolbar-btn" id="tb-bold" title="Bold (**text**)"><strong>B</strong></button>
+              <button class="toolbar-btn" id="tb-italic" title="Italic (*text*)"><em>I</em></button>
+              <button class="toolbar-btn" id="tb-heading" title="Heading (###)">H</button>
+              <div class="toolbar-divider"></div>
+              <button class="toolbar-btn" id="tb-scene-break" title="Scene Break (* * *)">⸻</button>
+              <div class="toolbar-divider"></div>
+              <button class="toolbar-btn" id="tb-undo" title="Undo">↺</button>
+              <button class="toolbar-btn" id="tb-redo" title="Redo">↻</button>
+            </div>
+
+            <div class="toolbar-group">
+              <input type="file" id="input-file-import" accept=".txt,.md" style="display: none;" />
+              <button class="btn btn-text btn-sm" id="btn-import-file" title="Import text file">
+                📥 Import
+              </button>
+            </div>
+          </div>
+
+          <!-- Manuscript Writing Canvas -->
+          <div class="editor-content-container">
+            <div class="manuscript-paper">
+              <!-- Prominent Bold Chapter Heading -->
+              <input type="text" class="active-chapter-title-input" id="chapter-title-input" placeholder="Chapter Name..." />
+              <!-- Manuscript Prose Area -->
+              <textarea class="manuscript-textarea" id="manuscript-textarea" placeholder="Begin writing your chapter here... The stars are listening."></textarea>
+            </div>
+          </div>
+        </main>
+
+        <!-- Right: AI Storytelling Chat Studio -->
+        <aside class="ai-studio-pane" id="ai-studio-pane">
+          <div class="studio-header">
+            <div class="studio-title-badge">
+              <span class="studio-sparkle">✨</span>
+              <span>Aura AI Studio</span>
+            </div>
+            <div style="display: flex; gap: 4px;">
+              <button class="chapter-action-btn" id="btn-clear-ai-chat" title="Clear conversation">🗑️</button>
+              <button class="chapter-action-btn" onclick="document.getElementById('ai-studio-pane').classList.toggle('collapsed')" title="Collapse Studio">▶</button>
+            </div>
+          </div>
+
+          <!-- 9 Writing Modes Pills -->
+          <div class="writing-modes-bar" id="writing-modes-bar">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Output Style Segmented Toggle -->
+          <div class="output-choice-bar">
+            <span>Output Style:</span>
+            <div class="output-choice-segmented">
+              <button class="choice-btn" data-choice="corrections">Corrections</button>
+              <button class="choice-btn" data-choice="suggestions">Suggestions</button>
+              <button class="choice-btn active" data-choice="rewritten">Rewritten</button>
+            </div>
+          </div>
+
+          <!-- Chat Messages Container -->
+          <div class="chat-messages-container" id="chat-messages-container">
+            <!-- Messages stream -->
+          </div>
+
+          <!-- AI Loading Indicator -->
+          <div class="ai-loading-indicator" id="ai-loading-indicator">
+            <span class="sparkle-spinner">✨</span>
+            <span>Aura is weaving prose beneath fading skies...</span>
+          </div>
+
+          <!-- Chat Input Area -->
+          <div class="chat-input-wrapper">
+            <div class="chat-input-box">
+              <textarea class="chat-textarea" id="chat-input-textarea" placeholder="Tell Aura your story... ✨" rows="2"></textarea>
+              <div class="chat-input-controls">
+                <span class="input-hints">Enter to send • Shift+Enter for newline</span>
+                <button class="btn-send-message" id="btn-send-chat" title="Send creative prompt">
+                  ➤
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ======================================================================
+       MODALS & OVERLAYS
+       ====================================================================== -->
+
+  <!-- 1. Authentication Modal -->
+  <div class="modal-overlay" id="modal-auth">
+    <div class="modal-card">
+      <button class="modal-close-btn" title="Close">✕</button>
+      <div class="modal-header">
+        <h2>Enter the Royal Archives</h2>
+        <p>Sign in to your storytelling haven or inscribe your author credentials.</p>
+      </div>
+
+      <!-- Segmented Tab -->
+      <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+        <button class="btn btn-secondary btn-sm active" id="tab-auth-signin" style="flex: 1;">Sign In</button>
+        <button class="btn btn-secondary btn-sm" id="tab-auth-signup" style="flex: 1;">Register Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="form-signin">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="signin-email" placeholder="author@aura.studio" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <input type="password" class="form-input" id="signin-password" placeholder="••••••••" required />
+            <button type="button" class="password-toggle-btn" data-target="signin-password">👁️</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+          ✨ Open Manuscript
+        </button>
+      </form>
+
+      <!-- Sign Up Form (With live password validator & DOB) -->
+      <form id="form-signup" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">Author Username</label>
+          <input type="text" class="form-input" id="signup-username" placeholder="LadyAstrid" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="signup-email" placeholder="author@aura.studio" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date of Birth (For Age Verification)</label>
+          <input type="date" class="form-input" id="signup-dob" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <input type="password" class="form-input" id="signup-password" placeholder="Create royal password" required />
+            <button type="button" class="password-toggle-btn" data-target="signup-password">👁️</button>
+          </div>
+
+          <!-- Password Requirements Live Checklist -->
+          <div class="password-criteria">
+            <div class="criteria-title">Royal Password Requirements:</div>
+            <div class="criteria-item invalid" id="crit-length"><span class="criteria-dot"></span> At least 8 characters</div>
+            <div class="criteria-item invalid" id="crit-upper"><span class="criteria-dot"></span> At least one uppercase letter (A-Z)</div>
+            <div class="criteria-item invalid" id="crit-lower"><span class="criteria-dot"></span> At least one lowercase letter (a-z)</div>
+            <div class="criteria-item invalid" id="crit-number"><span class="criteria-dot"></span> At least one number (0-9)</div>
+            <div class="criteria-item invalid" id="crit-special"><span class="criteria-dot"></span> At least one special symbol (!@#$%^&*)</div>
+          </div>
+        </div>
+
+        <div class="age-notice-box">
+          <span>🛡️</span>
+          <span>We respect your privacy. Date of birth is utilized solely for age-based sensitive content safeguards and transparent safety compliance.</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 16px;">
+          👑 Inscribe Royal Account
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. New Notebook Modal -->
+  <div class="modal-overlay" id="modal-new-notebook">
+    <div class="modal-card">
+      <button class="modal-close-btn" title="Close">✕</button>
+      <div class="modal-header">
+        <h2>Inscribe a New Notebook</h2>
+        <p>Give your chronicle a title, select its genre, and optionally lock it with a password.</p>
+      </div>
+
+      <form id="form-new-notebook">
+        <div class="form-group">
+          <label class="form-label">Notebook Name</label>
+          <input type="text" class="form-input" id="new-nb-name" placeholder="e.g. The Crown of Forgotten Stars" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Genre</label>
+          <select class="form-select" id="new-nb-genre">
+            <option value="Fantasy">✨ Fantasy</option>
+            <option value="Romance">🌸 Romance</option>
+            <option value="Mystery">🔍 Mystery</option>
+            <option value="Thriller">⚡ Thriller</option>
+            <option value="Horror">🌙 Horror</option>
+            <option value="Science Fiction">🪐 Science Fiction</option>
+            <option value="Adventure">🧭 Adventure</option>
+            <option value="Historical Fiction">📜 Historical Fiction</option>
+            <option value="Young Adult">🦋 Young Adult</option>
+            <option value="Comedy">🎠 Comedy</option>
+            <option value="Drama">🎭 Drama</option>
+            <option value="Custom">🖋️ Custom</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sub-Genre</label>
+          <select class="form-select" id="new-nb-subgenre">
+            <!-- Dynamically populated from config -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" id="new-nb-protect-checkbox" />
+            <span>🔒 Optional Password Protection</span>
+          </label>
+        </div>
+
+        <div class="form-group" id="new-nb-password-wrapper" style="display: none;">
+          <label class="form-label">Notebook Password</label>
+          <div class="input-wrapper">
+            <input type="password" class="form-input" id="new-nb-password" placeholder="Enter password to lock this manuscript" />
+            <button type="button" class="password-toggle-btn" data-target="new-nb-password">👁️</button>
+          </div>
+          <span style="font-size: 12px; color: var(--text-muted); display: block; margin-top: 4px;">
+            Passwords are cryptographically hashed and never stored in plain text.
+          </span>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+          <button type="button" class="btn btn-secondary btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">✨ Create Manuscript</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Unlock Password-Protected Notebook Modal -->
+  <div class="modal-overlay" id="modal-unlock-notebook">
+    <div class="modal-card" style="max-width: 440px; text-align: center;">
+      <button class="modal-close-btn" title="Close">✕</button>
+      <div style="font-size: 40px; margin-bottom: 12px;">🔒</div>
+      <div class="modal-header">
+        <h2>Protected Royal Vault</h2>
+        <p>This manuscript is locked. Enter its password to unveil its chapters.</p>
+      </div>
+
+      <form id="form-unlock-notebook">
+        <div class="form-group">
+          <div class="input-wrapper">
+            <input type="password" class="form-input" id="unlock-password-input" placeholder="Enter manuscript password" required />
+            <button type="button" class="password-toggle-btn" data-target="unlock-password-input">👁️</button>
+          </div>
+          <div id="unlock-error-msg" style="color: #c93b66; font-size: 13px; margin-top: 8px; min-height: 18px;"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+          🔓 Unlock Chronicle
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Dramatis Personae (Character Management) Modal -->
+  <div class="modal-overlay" id="modal-characters">
+    <div class="modal-card modal-card-lg">
+      <button class="modal-close-btn" title="Close">✕</button>
+      <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h2>Dramatis Personae</h2>
+          <p>Characters inhabiting this story universe. Aura references these dossiers when crafting scenes.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btn-add-character-trigger">
+          + Inscribe Character
+        </button>
+      </div>
+
+      <div class="characters-grid" id="characters-grid-container">
+        <!-- Dynamically populated character cards -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Inscribe New Character Modal -->
+  <div class="modal-overlay" id="modal-new-character">
+    <div class="modal-card">
+      <button class="modal-close-btn" title="Close">✕</button>
+      <div class="modal-header">
+        <h2>Inscribe New Character</h2>
+        <p>Define your character's soul, appearance, desires, and flaws.</p>
+      </div>
+
+      <form id="form-new-character">
+        <div class="form-group">
+          <label class="form-label">Character Name</label>
+          <input type="text" class="form-input" id="char-name-input" placeholder="e.g. Lyra of Astralis" required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="form-label">Age (Optional)</label>
+            <input type="text" class="form-input" id="char-age-input" placeholder="e.g. 19" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pronouns (Optional)</label>
+            <input type="text" class="form-input" id="char-pronouns-input" placeholder="she/her, he/him, they/them" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Personality & Core Flaws</label>
+          <input type="text" class="form-input" id="char-personality-input" placeholder="Quietly stubborn, deeply compassionate, hides a secret grief" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Appearance & Visual Style</label>
+          <input type="text" class="form-input" id="char-appearance-input" placeholder="Silver-threaded dark hair, scholar robes, starlight eyes" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Goals & Desires</label>
+          <input type="text" class="form-input" id="char-goals-input" placeholder="To decipher the Skyweaver Codex and save Astralis" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fears & Vulnerabilities</label>
+          <input type="text" class="form-input" id="char-fears-input" placeholder="Forgetting the lullaby her mother sang before the stars vanished" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Key Relationships</label>
+          <input type="text" class="form-input" id="char-relationships-input" placeholder="Childhood confidante and secret protector of Prince Caelen" />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button type="button" class="btn btn-secondary btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">👑 Save Character</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. Settings & Supabase Connection Modal -->
+  <div class="modal-overlay" id="modal-settings">
+    <div class="modal-card">
+      <button class="modal-close-btn" title="Close">✕</button>
+      <div class="modal-header">
+        <h2>Sanctuary Settings & Cloud Sync</h2>
+        <p>Connect your Supabase database or custom Gemini API key for international cloud sync.</p>
+      </div>
+
+      <form id="form-settings">
+        <div class="form-group">
+          <label class="form-label">Supabase Project URL</label>
+          <input type="url" class="form-input" id="settings-supabase-url" placeholder="https://your-project.supabase.co" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Supabase Anon Key</label>
+          <input type="password" class="form-input" id="settings-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Google Gemini API Key (Optional)</label>
+          <input type="password" class="form-input" id="settings-gemini-key" placeholder="AIzaSy..." />
+          <span style="font-size: 12px; color: var(--text-muted); display: block; margin-top: 4px;">
+            If left blank, Aura seamlessly uses its built-in offline creative storytelling engine.
+          </span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-logout" style="color: #a83252;">
+            Sign Out
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-secondary btn-modal-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. Beginner Writing Guide Modal -->
+  <div class="modal-overlay" id="modal-tutorial">
+    <div class="modal-card modal-card-lg">
+      <button class="modal-close-btn" title="Close">✕</button>
+      <div class="modal-header">
+        <h2>Welcome to Aura — Your Storytelling Companion ✨</h2>
+        <p>A simple guide to unlocking your creative writing sanctuary.</p>
+      </div>
+
+      <div style="font-size: 16px; line-height: 1.7; color: var(--text-primary);">
+        <h4 style="font-family: 'DM Serif Display', serif; font-size: 20px; margin-top: 14px; color: var(--text-accent);">
+          1. Notebooks & Multi-Chapter Chronicles
+        </h4>
+        <p>Every story starts as a Notebook in your dashboard. You can add as many chapters as your imagination demands using the <strong>"+ Add Another Chapter"</strong> button. Each chapter has dedicated autosave and word counts.</p>
+
+        <h4 style="font-family: 'DM Serif Display', serif; font-size: 20px; margin-top: 14px; color: var(--text-accent);">
+          2. The 9 AI Storytelling Modes
+        </h4>
+        <p>In the right-hand studio pane, toggle between modes like <em>Continue My Story</em>, <em>Find Errors</em>, <em>Improve Writing</em>, or <em>Build a World</em>. Highlight any sentence in your editor to ask Aura for direct line edits!</p>
+
+        <h4 style="font-family: 'DM Serif Display', serif; font-size: 20px; margin-top: 14px; color: var(--text-accent);">
+          3. One-Click "Insert into Story"
+        </h4>
+        <p>When Aura proposes a lyrical rewrite or dialogue continuation, click the <strong>"✨ Insert into Story"</strong> button below the message to automatically merge it into your manuscript.</p>
+
+        <h4 style="font-family: 'DM Serif Display', serif; font-size: 20px; margin-top: 14px; color: var(--text-accent);">
+          4. Password Protection & Cryptographic Privacy
+        </h4>
+        <p>Lock sensitive notebooks with an optional password. Passwords are hashed with SHA-256 and never stored in plain text.</p>
+      </div>
+
+      <div style="margin-top: 24px; text-align: right;">
+        <button class="btn btn-primary btn-modal-cancel">Let's Write ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Main Application Script (ES Module) -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
